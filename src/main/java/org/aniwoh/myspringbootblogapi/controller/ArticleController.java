@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/article")
 public class ArticleController {
     @GetMapping("/list")
-    public Result<String> list(){
+    public Result list(){
         //
         return Result.success("所有文章的数据");
     }
