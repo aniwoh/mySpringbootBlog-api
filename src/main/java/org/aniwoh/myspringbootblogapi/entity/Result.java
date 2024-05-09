@@ -61,12 +61,4 @@ public class Result implements Serializable {
         return simple;
     }
 
-    public String getMsg() {
-        return message;
-    }
-
-    public void setMsg(String msg) {
-        this.message = msg;
-    }
-
 }
