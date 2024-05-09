@@ -7,7 +7,6 @@ public interface AccountService {
     Account findByUsername(String username);
     void register(String username,String password);
 
-
     void update(Account account);
 
     //更新头像

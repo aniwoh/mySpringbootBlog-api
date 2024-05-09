@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/article")
@@ -16,9 +17,16 @@ public class ArticleController {
     @Autowired
     private ArticleService articleService;
     @GetMapping("/list")
-    public Result list(){
+    public Result articleList(){
         //获取文章数据
-        List<Article> articleList=articleService.list();
+        List<Map<String,Object>> articleList=articleService.ArticlelistWithTags();
         return Result.success(articleList);
+    }
+
+    @GetMapping("/detail")
+    public Result articleDetail(int id){
+        //获取文章数据
+        Article article=articleService.getArticleById(id);
+        return Result.success(article);
     }
 }
