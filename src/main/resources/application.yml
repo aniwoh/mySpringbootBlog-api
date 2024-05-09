@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: mySpringbootBlog-api
+  mvc:
+    static-path-pattern: /static/**
+  # 数据源的配置
+  datasource:
+    url: jdbc:mysql://192.168.1.101:3306/learnspringweb?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true
+    username: springUser
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+server:
+  port: 8888
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true  # 开启驼峰命名与下划线命名的自动转换

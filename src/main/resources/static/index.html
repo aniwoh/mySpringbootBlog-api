@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>MY index</title>
+    <!-- 页面图标 -->
+    <link rel="shortcut icon" href="/static/img/avater_240.jpg">
+    <!-- Fontawesome Icons v6.2.0 -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.css" rel="stylesheet">
+    <!-- CSS File -->
+    <link rel="stylesheet" href="/static/css/layout-index.css">
+    <link rel="stylesheet" href="/static/css/index_style.css">
+    <!--cdn引用highlight并调用-->
+    <link href="https://cdn.bootcdn.net/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css" rel="stylesheet">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+    <!--cdn引用showdown进行解析-->
+    <script src="https://cdn.bootcdn.net/ajax/libs/showdown/2.1.0/showdown.js"></script>
+
+</head>
+<body>
+<div class="background"></div>
+<div class="container">
+    <nav>
+        <div class="brand">
+            <a href="/index">
+                <img src="/static/img/avater_240.jpg" alt="">
+            </a>
+            <p>
+                Good day,
+                <span>
+                        Guest
+                </span>
+            </p>
+        </div>
+        <hr class="line">
+        <ul class="list">
+            <li class="active">
+                <i class="fa-solid fa-home"></i>
+                <span>Home</span>
+            </li>
+            <li>
+                <i class="fa-solid fa-list"></i>
+                <span>Category</span>
+            </li>
+            <li>
+                <i class="fa-solid fa-clock"></i>
+                <span>Archive</span>
+            </li>
+            <li>
+                <i class="fa-solid fa-user"></i>
+                <span>Accounts</span>
+            </li>
+            <li>
+                <i class="fa-solid fa-filter"></i>
+                <span><a href='/homepage'>Backend</a></span>
+            </li>
+            <hr class="line">
+            <li>
+<!--                <i class="fa-solid fa-right-from-bracket"></i>-->
+<!--                <span><a href="{% url 'logout' %}">Logout</a></span>-->
+                <i class="fa-solid fa-right-to-bracket"></i>
+                <span><a href="./login">Login</a></span>
+        </ul>
+    </nav>
+    <div class="main_content">
+        <div class="main-container">
+            <div class="post">
+                <a href="{% url 'post' %}?id={{ post.id }}" class="post-card">
+                    <div class="post-card-img" id="post-{{post.id}}"></div>
+                    <div class="post-card-text">
+                        <h2>{{ post.title }}</h2>
+                        <p>{{ post.author }}     {{ post.created_at }}</p>
+                    </div>
+                </a>
+                <script>
+                    fetch('/api/proxy', { method: 'GET' })
+                        .then(function(response) {
+                            if (response.ok) {
+                                // 获取代理的图片数据
+                                return response.blob();
+                            } else {
+                                console.log('Error:', response.statusText);
+                            }
+                        })
+                        .then(function(imageBlob) {
+                            if (imageBlob) {
+                                // 创建URL对象，用于显示图片
+                                const imageUrl = URL.createObjectURL(imageBlob);
+
+                                // 修改原始代码，将图片设置为背景
+                                var postID='{{ post.id|escapejs }}'
+                                var cardElement = document.getElementById("post-" + postID);
+                                cardElement.style.backgroundImage = "url('" + imageUrl + "')";
+                            }
+                        })
+                        .catch(function(error) {
+                            console.log('Error:', error);
+                        });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+</script>
+</body>
+</html>
