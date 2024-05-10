@@ -9,6 +9,9 @@ spring:
     username: springUser
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
+  thymeleaf:
+    prefix: classpath:/static/
+    suffix: .html
 
 server:
   port: 8888

@@ -19,4 +19,9 @@ public class IndexController {
         log.info("即将返回一个用户");
         return accountMapper.findUserByUid(uid);
     }
+
+    @RequestMapping({"/"})
+    public String index(){
+        return "index.html";
+    }
 }

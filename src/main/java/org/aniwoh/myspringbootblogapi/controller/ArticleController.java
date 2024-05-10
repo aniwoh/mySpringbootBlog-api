@@ -4,6 +4,7 @@ import org.aniwoh.myspringbootblogapi.entity.Article;
 import org.aniwoh.myspringbootblogapi.entity.Result;
 import org.aniwoh.myspringbootblogapi.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/article")
+@CrossOrigin(originPatterns = "http://localhost:5173")
 public class ArticleController {
     @Autowired
     private ArticleService articleService;

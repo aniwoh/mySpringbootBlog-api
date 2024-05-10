@@ -15,6 +15,8 @@
     <script>hljs.initHighlightingOnLoad();</script>
     <!--cdn引用showdown进行解析-->
     <script src="https://cdn.bootcdn.net/ajax/libs/showdown/2.1.0/showdown.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 
 </head>
 <body>
@@ -63,13 +65,13 @@
         </ul>
     </nav>
     <div class="main_content">
-        <div class="main-container">
-            <div class="post">
-                <a href="{% url 'post' %}?id={{ post.id }}" class="post-card">
-                    <div class="post-card-img" id="post-{{post.id}}"></div>
+        <div class="main-container" id = "app">
+            <div class="post" v-for="(article,index) in articleList">
+                <a href="{% url 'post' %}?id={{ article.id }}" class="post-card">
+                    <div class="post-card-img" id="post-{{article.id}}"></div>
                     <div class="post-card-text">
-                        <h2>{{ post.title }}</h2>
-                        <p>{{ post.author }}     {{ post.created_at }}</p>
+                        <h2>{{ article.title }}</h2>
+                        <p>{{ article.author }}     {{ article.createDate }}</p>
                     </div>
                 </a>
                 <script>
@@ -100,6 +102,27 @@
             </div>
         </div>
     </div>
+    <script>
+        const {createApp} = Vue;
+        createApp({
+                data(){
+                    return{
+                        articleList: []
+                    }
+                }
+                ,
+                mounted:function (){
+                    axios.get('/article/list')
+                        .then(response => {
+                            this.articleList = response.data.data;
+                            console.log(response.data.data)
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+                }
+            }).mount("#app");
+    </script>
 </div>
 <script>
 
