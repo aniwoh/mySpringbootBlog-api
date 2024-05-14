@@ -24,4 +24,11 @@ public class IndexController {
     public String index(){
         return "index.html";
     }
+
+    @RequestMapping({"/post"})
+    public String post(){
+        return "index/post.html";
+    }
+
+
 }

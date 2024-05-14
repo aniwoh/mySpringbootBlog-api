@@ -67,7 +67,7 @@
     <div class="main_content">
         <div class="main-container" id = "app">
             <div class="post" v-for="(article,index) in articleList">
-                <a href="{% url 'post' %}?id={{ article.id }}" class="post-card">
+                <a href="/post?id={{ article.id }}" class="post-card">
                     <div class="post-card-img" id="post-{{article.id}}"></div>
                     <div class="post-card-text">
                         <h2>{{ article.title }}</h2>
@@ -90,7 +90,7 @@
                                 const imageUrl = URL.createObjectURL(imageBlob);
 
                                 // 修改原始代码，将图片设置为背景
-                                var postID='{{ post.id|escapejs }}'
+                                var postID='{{ post.id }}'
                                 var cardElement = document.getElementById("post-" + postID);
                                 cardElement.style.backgroundImage = "url('" + imageUrl + "')";
                             }
@@ -115,17 +115,14 @@
                     axios.get('/article/list')
                         .then(response => {
                             this.articleList = response.data.data;
-                            console.log(response.data.data)
                         })
                         .catch(error => {
                             console.log(error);
                         });
-                }
+                    },
+
             }).mount("#app");
     </script>
 </div>
-<script>
-
-</script>
 </body>
 </html>
