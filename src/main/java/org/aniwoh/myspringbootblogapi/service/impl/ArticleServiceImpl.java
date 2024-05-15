@@ -1,6 +1,7 @@
 package org.aniwoh.myspringbootblogapi.service.impl;
 
 import org.aniwoh.myspringbootblogapi.entity.Article;
+import org.aniwoh.myspringbootblogapi.entity.Tag;
 import org.aniwoh.myspringbootblogapi.mapper.ArticleMapper;
 import org.aniwoh.myspringbootblogapi.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +27,10 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public Article getArticleById(int id) {
         return articleMapper.findArticleById(id);
+    }
+
+    @Override
+    public List<Tag> getAllTags() {
+        return articleMapper.findAllTags();
     }
 }

@@ -24,6 +24,7 @@ import java.util.Objects;
 @RequestMapping("/user")
 @Validated
 @Slf4j
+@CrossOrigin(originPatterns = "http://localhost:5173")
 public class AccountController {
     @Autowired
     private AccountService accountService;

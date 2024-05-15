@@ -1,6 +1,7 @@
 package org.aniwoh.myspringbootblogapi.mapper;
 
 import org.aniwoh.myspringbootblogapi.entity.Article;
+import org.aniwoh.myspringbootblogapi.entity.Tag;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Result;
@@ -23,4 +24,7 @@ public interface ArticleMapper {
 
     @Select("select * from me_article where id = #{id}")
     Article findArticleById(int id);
+
+    @Select("select * from me_tags")
+    List<Tag> findAllTags();
 }

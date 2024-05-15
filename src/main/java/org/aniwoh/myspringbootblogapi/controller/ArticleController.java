@@ -2,6 +2,7 @@ package org.aniwoh.myspringbootblogapi.controller;
 
 import org.aniwoh.myspringbootblogapi.entity.Article;
 import org.aniwoh.myspringbootblogapi.entity.Result;
+import org.aniwoh.myspringbootblogapi.entity.Tag;
 import org.aniwoh.myspringbootblogapi.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -14,7 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/article")
-@CrossOrigin(originPatterns = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ArticleController {
     @Autowired
     private ArticleService articleService;
@@ -30,5 +31,12 @@ public class ArticleController {
         //获取文章数据
         Article article=articleService.getArticleById(id);
         return Result.success(article);
+    }
+
+    @GetMapping("/tags")
+    public Result tags(){
+        //获取文章数据
+        List<Tag> tags=articleService.getAllTags();
+        return Result.success(tags);
     }
 }
