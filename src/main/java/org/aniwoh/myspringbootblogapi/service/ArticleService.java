@@ -11,7 +11,8 @@ public interface ArticleService {
 
     List<Map<String,Object>> ArticlelistWithTags();
 
-    Article getArticleById(int id);
+
+    Map<String,Object> getArticleByIdWithTags(int id);
 
     List<Tag> getAllTags();
 }

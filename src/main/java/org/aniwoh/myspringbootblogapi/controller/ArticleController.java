@@ -29,7 +29,7 @@ public class ArticleController {
     @GetMapping("/detail")
     public Result articleDetail(int id){
         //获取文章数据
-        Article article=articleService.getArticleById(id);
+        Map<String,Object> article=articleService.getArticleByIdWithTags(id);
         return Result.success(article);
     }
 

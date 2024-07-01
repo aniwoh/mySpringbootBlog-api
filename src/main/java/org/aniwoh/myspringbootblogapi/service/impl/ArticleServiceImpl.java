@@ -1,5 +1,6 @@
 package org.aniwoh.myspringbootblogapi.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.aniwoh.myspringbootblogapi.entity.Article;
 import org.aniwoh.myspringbootblogapi.entity.Tag;
 import org.aniwoh.myspringbootblogapi.mapper.ArticleMapper;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class ArticleServiceImpl implements ArticleService {
     @Autowired
     ArticleMapper articleMapper;
@@ -25,8 +27,8 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Article getArticleById(int id) {
-        return articleMapper.findArticleById(id);
+    public Map<String,Object> getArticleByIdWithTags(int id) {
+        return articleMapper.findArticleByIdWithTags(id);
     }
 
     @Override
