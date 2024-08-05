@@ -33,6 +33,9 @@ public interface ArticleMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insertArticle(Article article);
 
+    @Update("UPDATE me_article SET viewCounts = viewCounts + 1 WHERE id = #{id}")
+    void incrementViewCount(@Param("id") int id);
+
     @Select("select * from me_tags where tagName=#{name}")
     Tag findTagByName(String name);
 

@@ -17,6 +17,8 @@ public interface ArticleService {
 
     Article getArticleById(int id);
 
+    void incrementViewCount(int id);
+
     List<Tag> getAllTags();
 
     Tag findByName(String name);

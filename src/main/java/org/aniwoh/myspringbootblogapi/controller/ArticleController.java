@@ -9,6 +9,7 @@ import org.aniwoh.myspringbootblogapi.utils.AutoReload;
 import org.aniwoh.myspringbootblogapi.vo.ArticleVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.WebSession;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class ArticleController {
     public Result articleList(){
         //获取文章数据
         List<Article> articleList=articleService.Articlelist();
+        log.info("请求了一次list");
         List<ArticleVo> articleVoList = articleList.stream().map(article -> {
             List<String> tagNames = articleService.findTagsByArticleId(article.getId());
             ArticleVo articleVo = new ArticleVo();
@@ -39,7 +41,7 @@ public class ArticleController {
     }
 
     @GetMapping("/detail")
-    public Result articleDetail(int id){
+    public Result articleDetail(@RequestParam int id,WebSession session){
         Article article = articleService.getArticleById(id);
         ArticleVo articleVo = new ArticleVo();
         try {
@@ -49,6 +51,15 @@ public class ArticleController {
         }
         List<String> tagNames = articleService.findTagsByArticleId(article.getId());
         articleVo.setTagNames(tagNames);
+
+        String sessionKey = "viewedArticle_" + id;
+        if (!session.getAttributes().containsKey(sessionKey)) {
+            // 增加观看数
+            articleService.incrementViewCount(id);
+            // 记录用户已经访问过该文章
+            session.getAttributes().put(sessionKey, true);
+        }
+
 
         //获取文章数据
         return Result.success(articleVo);

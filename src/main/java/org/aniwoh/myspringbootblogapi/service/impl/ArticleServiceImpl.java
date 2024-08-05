@@ -37,6 +37,11 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    public void incrementViewCount(int id) {
+        articleMapper.incrementViewCount(id);
+    }
+
+    @Override
     public List<Tag> getAllTags() {
         return articleMapper.findAllTags();
     }
