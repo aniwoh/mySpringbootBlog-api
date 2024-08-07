@@ -2,16 +2,20 @@ package org.aniwoh.myspringbootblogapi.service;
 
 import org.aniwoh.myspringbootblogapi.entity.Account;
 
+import java.util.Optional;
+
 public interface AccountService {
     //根据用户名查询
-    Account findByUsername(String username);
-    void register(String username,String password);
+    public Optional<Account> findAccountByUid(Integer uid);
 
-    void update(Account account);
+    public Optional<Account> findAccountByUsername(String username);
 
-    //更新头像
-    void updateAvatar(String avatarUrl);
+    public Account addUser(String username, String password);
 
-    //更新密码
-    void updatePwd(String newPwd);
+    public Account update(Account account);
+
+    public void updateAvatar(String avatarUrl, Integer uid);
+
+    public void updatePwd(String newPwd,Integer uid);
+
 }

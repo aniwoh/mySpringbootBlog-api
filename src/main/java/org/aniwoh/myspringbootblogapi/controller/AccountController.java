@@ -3,6 +3,7 @@ package org.aniwoh.myspringbootblogapi.controller;
 import cn.hutool.crypto.digest.DigestAlgorithm;
 import cn.hutool.crypto.digest.Digester;
 import cn.hutool.jwt.JWTUtil;
+import jakarta.annotation.Resource;
 import org.aniwoh.myspringbootblogapi.entity.Account;
 import org.aniwoh.myspringbootblogapi.entity.Result;
 import org.aniwoh.myspringbootblogapi.entity.ResultCode;
@@ -19,23 +20,23 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
 @Validated
 @Slf4j
-@CrossOrigin(originPatterns = "http://localhost:5173")
 public class AccountController {
-    @Autowired
+    @Resource
     private AccountService accountService;
     @PostMapping("/register")
     public Result register(@Pattern(regexp = "^\\S{1,10}$") String username, @Pattern(regexp = "^\\S{5,16}$") String password){
         //查询用户
-        Account account = accountService.findByUsername(username);
-        if (account == null ){
+        Optional<Account> account = accountService.findAccountByUsername(username);
+        if (account.isEmpty()){
             //用户名没有占用
             //注册用户
-            accountService.register(username,password);
+            accountService.addUser(username,password);
             log.info("用户:"+username+"注册成功");
             return Result.success();
         }else {
@@ -47,19 +48,19 @@ public class AccountController {
     @PostMapping("/login")
     public Result Login(@Pattern(regexp = "^\\S{1,10}$") String username,@Pattern(regexp = "^\\S{5,16}$") String password){
         //查询用户
-        Account account = accountService.findByUsername(username);
-        if (account == null){
+        Optional<Account> account = accountService.findAccountByUsername(username);
+        if (account.isEmpty()){
             // 没有找到用户，用户名不存在
             log.info("登陆失败，用户不存在");
             return Result.error(ResultCode.ERROR,"用户不存在");
         }else {
             Digester md5 = new Digester(DigestAlgorithm.MD5);
-            if (Objects.equals(md5.digestHex(password), account.getPassword())){
+            if (Objects.equals(md5.digestHex(password), account.get().getPassword())){
                 // 密码正确
                 log.info("登录成功");
                 Map<String, Object> map = new HashMap<>();
-                map.put("uid", account.getUid());
-                map.put("username", account.getUsername());
+                map.put("uid", account.get().getUid());
+                map.put("username", account.get().getUsername());
                 String token=JWTUtil.createToken(map, "aniwoh".getBytes());
                 return Result.success(token);
             }else {
@@ -73,7 +74,10 @@ public class AccountController {
         Map<String,Object> map = ThreadLocalUtil.get();
         String username = (String) map.get("username");
 
-        Account account = accountService.findByUsername(username);
+        Optional<Account> account = accountService.findAccountByUsername(username);
+        if (account.isEmpty()){
+            return Result.error(ResultCode.ERROR);
+        }
         return Result.success(account);
     }
     @PutMapping("/update")
@@ -84,7 +88,7 @@ public class AccountController {
 
     @PatchMapping("/updateAvatar")
     public Result updateAvatar(@RequestParam @URL String avatarUrl){
-        accountService.updateAvatar(avatarUrl);
+        accountService.updateAvatar(avatarUrl,1);
         return Result.success();
     }
 
@@ -102,9 +106,9 @@ public class AccountController {
         Map<String,Object> map = ThreadLocalUtil.get();
         String username = map.get("username").toString();
         log.info(username);
-        Account account = accountService.findByUsername(username);
+        Optional<Account> account = accountService.findAccountByUsername(username);
         Digester md5 = new Digester(DigestAlgorithm.MD5);
-        if (!account.getPassword().equals(md5.digestHex(oldPwd))){
+        if (!account.get().getPassword().equals(md5.digestHex(oldPwd))){
             return Result.error(ResultCode.ERROR,"原密码不正确");
         }
 
@@ -113,7 +117,7 @@ public class AccountController {
             return Result.error(ResultCode.ERROR,"两次密码不一致");
         }
         //2.修改密码
-        accountService.updatePwd(md5.digestHex(newPwd));
+        accountService.updatePwd(md5.digestHex(newPwd),1);
         return Result.success();
     }
 }

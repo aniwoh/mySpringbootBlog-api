@@ -1,51 +1,61 @@
 package org.aniwoh.myspringbootblogapi.service.impl;
 
-import cn.hutool.crypto.digest.DigestAlgorithm;
-import cn.hutool.crypto.digest.Digester;
+import org.aniwoh.myspringbootblogapi.Repository.AccountRepository;
 import org.aniwoh.myspringbootblogapi.entity.Account;
-import org.aniwoh.myspringbootblogapi.mapper.AccountMapper;
 import org.aniwoh.myspringbootblogapi.service.AccountService;
-import org.aniwoh.myspringbootblogapi.utils.ThreadLocalUtil;
+import org.aniwoh.myspringbootblogapi.service.CounterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class AccountServiceImpl implements AccountService {
     @Autowired
-    private AccountMapper accountMapper;
+    private AccountRepository accountRepository;
+
+    @Autowired
+    private CounterService counterService;
+
     @Override
-    public Account findByUsername(String username) {
-        return accountMapper.findUserByUsername(username);
+    public Optional<Account> findAccountByUid(Integer uid){
+        return accountRepository.findAccountByUid(uid);
+    }
+    @Override
+    public Optional<Account> findAccountByUsername(String username) {
+        return accountRepository.findAccountByUsername(username);
     }
 
     @Override
-    public void register(String username, String password) {
-        Digester md5 = new Digester(DigestAlgorithm.MD5);
-        //密码加密
-        String MD5password = md5.digestHex(password);
-        //添加
-        accountMapper.addUser(username, MD5password);
-    }
-
-
-    @Override
-    public void update(Account account) {
-        accountMapper.update(account);
+    public Account addUser(String username, String password) {
+        Account account = new Account(username,password);
+        account.setUid(counterService.getNextSequence("account_uid"));
+        return accountRepository.save(account);
     }
 
     @Override
-    public void updateAvatar(String avatarUrl) {
-        Map<String,Object> map = ThreadLocalUtil.get();
-        Integer uid = Integer.parseInt(map.get("uid").toString());
-        accountMapper.updateAvatar(avatarUrl,uid);
+    public Account update(Account account) {
+        return accountRepository.save(account);
     }
 
     @Override
-    public void updatePwd(String newPwd) {
-        Map<String,Object> map = ThreadLocalUtil.get();
-        Integer uid = Integer.parseInt(map.get("uid").toString());
-        accountMapper.updatePwd(newPwd,uid);
+    public void updateAvatar(String avatarUrl, Integer uid) {
+        Optional<Account> optionalAccount = accountRepository.findAccountByUid(uid);
+        if (optionalAccount.isPresent()) {
+            Account account = optionalAccount.get();
+            account.setUserPic(avatarUrl);
+            accountRepository.save(account);
+        }
+
+    }
+
+    @Override
+    public void updatePwd(String newPwd,Integer uid) {
+        Optional<Account> optionalAccount = accountRepository.findAccountByUid(uid);
+        if (optionalAccount.isPresent()) {
+            Account account = optionalAccount.get();
+            account.setPassword(newPwd);
+            accountRepository.save(account);
+        }
     }
 }

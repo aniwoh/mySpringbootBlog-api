@@ -3,6 +3,9 @@ spring:
     name: mySpringbootBlog-api
   mvc:
     static-path-pattern: /static/**
+  data:
+    mongodb:
+      uri: mongodb://192.168.1.120:27017/learnspringweb
   # 数据源的配置
   datasource:
     url: jdbc:mysql://192.168.1.120:3306/learnspringweb?allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8&useSSL=false&allowPublicKeyRetrieval=true

@@ -4,10 +4,13 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection = "counters")
 @Data
-@Document(collection = "me_tags")
-public class Tag {
+public class Counter {
     @Id
     private String id;
-    private String tagName;
+    private String name;
+    private Integer seq;
+
+    // Getters and Setters
 }

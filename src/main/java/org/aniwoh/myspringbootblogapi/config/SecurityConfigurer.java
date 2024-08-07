@@ -19,7 +19,7 @@ public class SecurityConfigurer {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable) //关闭csrf认证
                 .authorizeExchange((authorize) -> authorize
                         .pathMatchers("/user/login","/user/register").permitAll()
-                        .pathMatchers("/article/upload").hasRole("ADMIN")
+//                        .pathMatchers("/article/upload").hasRole("ADMIN")
                         .pathMatchers("/article/**").permitAll())
                 .build();
     }
