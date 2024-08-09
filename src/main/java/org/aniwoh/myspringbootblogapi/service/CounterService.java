@@ -1,5 +1,6 @@
 package org.aniwoh.myspringbootblogapi.service;
 
+import reactor.core.publisher.Mono;
 public interface CounterService {
-    public Integer getNextSequence(String name);
+    Mono<Integer>  getNextSequence(String name);
 }

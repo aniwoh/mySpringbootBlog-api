@@ -2,14 +2,12 @@ package org.aniwoh.myspringbootblogapi.controller;
 
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.aniwoh.myspringbootblogapi.entity.Article;
-import org.aniwoh.myspringbootblogapi.entity.ArticleTag;
-import org.aniwoh.myspringbootblogapi.entity.Result;
-import org.aniwoh.myspringbootblogapi.entity.Tag;
+import org.aniwoh.myspringbootblogapi.entity.*;
 import org.aniwoh.myspringbootblogapi.service.ArticleService;
 import org.aniwoh.myspringbootblogapi.service.TagService;
 import org.aniwoh.myspringbootblogapi.utils.AutoReload;
 import org.aniwoh.myspringbootblogapi.vo.ArticleVo;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.WebSession;
 
@@ -27,12 +25,16 @@ public class ArticleController {
     @Resource
     private TagService tagService;
 
+    @Resource
+    private RedisTemplate<String, Object> redisTemplate;
+
     @GetMapping("/list")
     public Result articleList(){
         //获取文章数据
         List<Article> articleList=articleService.Articlelist();
         log.info("请求了一次list");
         List<ArticleVo> articleVoList = articleList.stream().map(article -> {
+            redisTemplate.opsForValue().set(article.getId(),article.toString());
             List<String> tagNames = tagService.findTagNamesByArticleId(article.getId());
             ArticleVo articleVo = new ArticleVo();
             try {
@@ -83,7 +85,7 @@ public class ArticleController {
     }
 
     @PutMapping("/upload")
-    public Result uploadArticle(@RequestBody ArticleVo articleVo){
+    public Result uploadArticle(@RequestBody ArticleVo articleVo,WebSession webSession){
         Article article = new Article();
         article.setTitle(articleVo.getTitle());
         article.setAuthor(articleVo.getAuthor());

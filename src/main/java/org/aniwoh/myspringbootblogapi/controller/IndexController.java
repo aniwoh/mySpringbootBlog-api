@@ -19,7 +19,7 @@ public class IndexController {
     @ResponseBody
     public Optional<Account> index(Integer uid){
         log.info("即将返回一个用户");
-        return accountRepository.findAccountByUid(uid);
+        return accountRepository.findAccountByUid(uid).blockOptional();
     }
 
     @RequestMapping({"/"})

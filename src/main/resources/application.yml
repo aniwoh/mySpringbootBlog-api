@@ -8,9 +8,16 @@ spring:
       host: 192.168.1.120
       port: 27017
       database: learnspringweb
+    redis:
+      host: 192.168.1.120
+      port: 6379
+      password: 123456
   thymeleaf:
     prefix: classpath:/static/
     suffix: .html
 
+jwt:
+  secret-key : "uS+z+xPz2VtY0ndD2/cW/nH1dVo+Xb/xkF6Ex2n6Nzg="
+  token-expiration-seconds : 86400
 server:
   port: 8888
