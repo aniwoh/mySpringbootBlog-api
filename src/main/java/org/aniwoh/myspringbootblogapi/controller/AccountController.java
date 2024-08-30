@@ -1,5 +1,6 @@
 package org.aniwoh.myspringbootblogapi.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.secure.BCrypt;
 import cn.dev33.satoken.stp.StpUtil;
 import jakarta.annotation.Resource;
@@ -21,7 +22,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
-@Validated
 @Slf4j
 @RequiredArgsConstructor
 public class AccountController {
@@ -60,18 +60,21 @@ public class AccountController {
             }
         }
    }
-//
-//    @GetMapping("/accountInfo")
-//    public Mono<Result> accountInfo(ServerWebExchange webExchange) {
-//        String token = webExchange.getRequest().getHeaders().getFirst("Authorization");
-//        if (token == null) {
-//            webExchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-//            return Mono.just(Result.error(ResultCode.ERROR));
-//        }
-//        return accountService.findAccountByUsername("usernaem")
-//                .map(Result::success)
-//                .switchIfEmpty(Mono.just(Result.error(ResultCode.ERROR)));
-//    }
+
+   @GetMapping("/logout")
+   @SaCheckLogin
+   public Result logout(){
+        StpUtil.logout();
+        return Result.success();
+   }
+
+    @GetMapping("/accountInfo")
+    @SaCheckLogin
+    public Result accountInfo() {
+        String username = (String) StpUtil.getLoginId();
+        Account account = accountService.findAccountByUsername(username);
+        return Result.success(account);
+    }
 //
 //    @PutMapping("/update")
 //    public Mono<Result> update(@RequestBody Account account) {
