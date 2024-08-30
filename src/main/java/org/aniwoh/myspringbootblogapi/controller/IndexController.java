@@ -17,9 +17,9 @@ public class IndexController {
     AccountRepository accountRepository;
     @RequestMapping({"/test"})
     @ResponseBody
-    public Optional<Account> index(Integer uid){
+    public Account index(Integer uid){
         log.info("即将返回一个用户");
-        return accountRepository.findAccountByUid(uid).blockOptional();
+        return accountRepository.findAccountByUid(uid);
     }
 
     @RequestMapping({"/"})

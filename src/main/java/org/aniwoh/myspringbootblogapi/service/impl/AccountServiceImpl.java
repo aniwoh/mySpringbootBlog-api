@@ -1,15 +1,12 @@
 package org.aniwoh.myspringbootblogapi.service.impl;
 
+import cn.dev33.satoken.secure.BCrypt;
 import org.aniwoh.myspringbootblogapi.Repository.AccountRepository;
 import org.aniwoh.myspringbootblogapi.entity.Account;
 import org.aniwoh.myspringbootblogapi.service.AccountService;
 import org.aniwoh.myspringbootblogapi.service.CounterService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
-
-import java.util.Optional;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -19,50 +16,34 @@ public class AccountServiceImpl implements AccountService {
     @Autowired
     private CounterService counterService;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @Override
-    public Mono<Account> findAccountByUid(Integer uid){
+    public Account findAccountByUid(Integer uid){
         return accountRepository.findAccountByUid(uid);
     }
     @Override
-    public Mono<Account> findAccountByUsername(String username) {
+    public Account findAccountByUsername(String username) {
         return accountRepository.findAccountByUsername(username);
     }
 
     @Override
-    public Mono<Account> addUser(String username, String password) {
-        return counterService.getNextSequence("account_uid")
-                .flatMap(uid -> {
-                    Account account = new Account(username, passwordEncoder.encode(password));
-                    account.setUid(uid);
-                    return accountRepository.save(account);
-                });
-    }
-
-    @Override
-    public Mono<Account> update(Account account) {
+    public Account addUser(String username, String password) {
+        Integer uid = counterService.getNextSequence("account_uid");
+        Account account = new Account(username, BCrypt.hashpw(password));
+        account.setUid(uid);
         return accountRepository.save(account);
     }
 
     @Override
-    public Mono<Void> updateAvatar(String avatarUrl, Integer uid) {
-        return accountRepository.findAccountByUid(uid)
-                .flatMap(account -> {
-                    account.setUserPic(avatarUrl);
-                    return accountRepository.save(account);
-                })
-                .then();
+    public Account update(Account account) {
+        return accountRepository.save(account);
     }
 
     @Override
-    public Mono<Void> updatePwd(String newPwd,Integer uid) {
-        return accountRepository.findAccountByUid(uid)
-                .flatMap(account -> {
-                    account.setPassword(newPwd);
-                    return accountRepository.save(account);
-                })
-                .then();
+    public void updateAvatar(String avatarUrl, Integer uid) {
+
     }
+
+    @Override
+    public void updatePwd(String newPwd,Integer uid) {}
+
 }

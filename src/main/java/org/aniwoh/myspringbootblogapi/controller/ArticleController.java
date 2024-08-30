@@ -1,6 +1,8 @@
 package org.aniwoh.myspringbootblogapi.controller;
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.aniwoh.myspringbootblogapi.entity.*;
 import org.aniwoh.myspringbootblogapi.service.ArticleService;
@@ -9,7 +11,6 @@ import org.aniwoh.myspringbootblogapi.utils.AutoReload;
 import org.aniwoh.myspringbootblogapi.vo.ArticleVo;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.WebSession;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,7 +51,7 @@ public class ArticleController {
     }
 
     @GetMapping("/detail")
-    public Result articleDetail(@RequestParam String id,WebSession session){
+    public Result articleDetail(@RequestParam String id, HttpSession session){
         Optional<Article> optionalArticle = articleService.findArticleById(id);
         Article article = new Article();
         if (optionalArticle.isPresent()){
@@ -66,11 +67,11 @@ public class ArticleController {
         articleVo.setTagNames(tagNames);
 
         String sessionKey = "viewedArticle_" + id;
-        if (!session.getAttributes().containsKey(sessionKey)) {
+        if (session.getAttribute(sessionKey) == null) {
             // 增加观看数
             articleService.incrementViewCount(id);
             // 记录用户已经访问过该文章
-            session.getAttributes().put(sessionKey, true);
+            session.setAttribute(sessionKey, true);
         }
 
         //获取文章数据
@@ -85,7 +86,8 @@ public class ArticleController {
     }
 
     @PutMapping("/upload")
-    public Result uploadArticle(@RequestBody ArticleVo articleVo,WebSession webSession){
+    @SaCheckRole("admin")
+    public Result uploadArticle(@RequestBody ArticleVo articleVo){
         Article article = new Article();
         article.setTitle(articleVo.getTitle());
         article.setAuthor(articleVo.getAuthor());
