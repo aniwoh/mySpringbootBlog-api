@@ -1,23 +1,23 @@
 package org.aniwoh.myspringbootblogapi.service;
 
 import org.aniwoh.myspringbootblogapi.entity.Account;
-import reactor.core.publisher.Mono;
 
-
-import java.util.Optional;
+import java.util.List;
 
 public interface AccountService {
     //根据用户名查询
-    public Account findAccountByUid(Integer uid);
+    Account findAccountByUid(Integer uid);
 
-    public Account findAccountByUsername(String username);
+    Account findAccountByUsername(String username);
 
-    public Account addUser(String username, String password);
+    List<Account> findAllAccount();
 
-    public Account update(Account account);
+    void addUser(String username, String password);
 
-    public void updateAvatar(String avatarUrl, Integer uid);
+    Account update(Account account);
 
-    public void updatePwd(String newPwd,Integer uid);
+    void updateAvatar(String avatarUrl, Integer uid);
+
+    void updatePwd(String newPwd, Integer uid);
 
 }

@@ -1,19 +1,21 @@
 package org.aniwoh.myspringbootblogapi.service.impl;
 
 import cn.dev33.satoken.secure.BCrypt;
+import jakarta.annotation.Resource;
 import org.aniwoh.myspringbootblogapi.Repository.AccountRepository;
 import org.aniwoh.myspringbootblogapi.entity.Account;
 import org.aniwoh.myspringbootblogapi.service.AccountService;
 import org.aniwoh.myspringbootblogapi.service.CounterService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class AccountServiceImpl implements AccountService {
-    @Autowired
+    @Resource
     private AccountRepository accountRepository;
 
-    @Autowired
+    @Resource
     private CounterService counterService;
 
     @Override
@@ -26,11 +28,15 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account addUser(String username, String password) {
+    public void addUser(String username, String password) {
         Integer uid = counterService.getNextSequence("account_uid");
         Account account = new Account(username, BCrypt.hashpw(password));
         account.setUid(uid);
-        return accountRepository.save(account);
+    }
+
+    @Override
+    public List<Account> findAllAccount() {
+        return accountRepository.findAll();
     }
 
     @Override

@@ -4,12 +4,14 @@ import cn.dev33.satoken.annotation.SaCheckRole;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
-import org.aniwoh.myspringbootblogapi.entity.*;
+import org.aniwoh.myspringbootblogapi.entity.Article;
+import org.aniwoh.myspringbootblogapi.entity.ArticleTag;
+import org.aniwoh.myspringbootblogapi.entity.Result;
+import org.aniwoh.myspringbootblogapi.entity.Tag;
 import org.aniwoh.myspringbootblogapi.service.ArticleService;
 import org.aniwoh.myspringbootblogapi.service.TagService;
 import org.aniwoh.myspringbootblogapi.utils.AutoReload;
 import org.aniwoh.myspringbootblogapi.vo.ArticleVo;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,20 +28,15 @@ public class ArticleController {
     @Resource
     private TagService tagService;
 
-    @Resource
-    private RedisTemplate<String, Object> redisTemplate;
-
     @GetMapping("/list")
-    public Result articleList(){
+    public Result articleList() {
         //获取文章数据
-        List<Article> articleList=articleService.Articlelist();
-        log.info("请求了一次list");
+        List<Article> articleList = articleService.Articlelist();
         List<ArticleVo> articleVoList = articleList.stream().map(article -> {
-            redisTemplate.opsForValue().set(article.getId(),article.toString());
             List<String> tagNames = tagService.findTagNamesByArticleId(article.getId());
             ArticleVo articleVo = new ArticleVo();
             try {
-                AutoReload.reload(article,articleVo);
+                AutoReload.reload(article, articleVo);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
@@ -51,15 +48,15 @@ public class ArticleController {
     }
 
     @GetMapping("/detail")
-    public Result articleDetail(@RequestParam String id, HttpSession session){
+    public Result articleDetail(@RequestParam String id, HttpSession session) {
         Optional<Article> optionalArticle = articleService.findArticleById(id);
         Article article = new Article();
-        if (optionalArticle.isPresent()){
-            article=optionalArticle.get();
+        if (optionalArticle.isPresent()) {
+            article = optionalArticle.get();
         }
         ArticleVo articleVo = new ArticleVo();
         try {
-            AutoReload.reload(article,articleVo);
+            AutoReload.reload(article, articleVo);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -79,34 +76,35 @@ public class ArticleController {
     }
 
     @GetMapping("/tags")
-    public Result tags(){
+    public Result tags() {
         //获取文章数据
-        List<Tag> tags=tagService.findAllTags();
+        List<Tag> tags = tagService.findAllTags();
         return Result.success(tags);
     }
 
     @PutMapping("/upload")
     @SaCheckRole("admin")
-    public Result uploadArticle(@RequestBody ArticleVo articleVo){
+    public Result uploadArticle(@RequestBody ArticleVo articleVo) {
         Article article = new Article();
-        article.setTitle(articleVo.getTitle());
-        article.setAuthor(articleVo.getAuthor());
-        article.setBody(articleVo.getBody());
-        article.setCreateDate(articleVo.getCreateDate());
+        try {
+            AutoReload.reload(articleVo, article);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
         articleService.insertArticle(article);
-        if (articleVo.getTagNames() != null){
-        for(String tagName : articleVo.getTagNames()){
-            Optional<Tag> optionalTag = tagService.findTagByTagNames(tagName);
-            Tag tag = new Tag();
-            if (optionalTag.isEmpty()){
-                tag.setTagName(tagName);
-                log.info("准备添加tag");
-                tagService.insertTag(tag);
-            } else {
-                tag=optionalTag.get();
-            }
-            ArticleTag articleTag = new ArticleTag(article.getId(),tag.getId());
-            tagService.insertArticleTag(articleTag);
+        if (articleVo.getTagNames() != null) {
+            for (String tagName : articleVo.getTagNames()) {
+                Optional<Tag> optionalTag = tagService.findTagByTagNames(tagName);
+                Tag tag = new Tag();
+                if (optionalTag.isEmpty()) {
+                    tag.setTagName(tagName);
+                    log.info("准备添加tag");
+                    tagService.insertTag(tag);
+                } else {
+                    tag = optionalTag.get();
+                }
+                ArticleTag articleTag = new ArticleTag(article.getId(), tag.getId());
+                tagService.insertArticleTag(articleTag);
             }
         }
         return Result.success();

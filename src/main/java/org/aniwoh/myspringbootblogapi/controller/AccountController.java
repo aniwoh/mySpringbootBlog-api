@@ -1,6 +1,7 @@
 package org.aniwoh.myspringbootblogapi.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.secure.BCrypt;
 import cn.dev33.satoken.stp.StpUtil;
 import jakarta.annotation.Resource;
@@ -53,7 +54,6 @@ public class AccountController {
         } else {
             if (BCrypt.checkpw(password, account.getPassword())) {
                 StpUtil.login(username);
-
                 return Result.success();
             } else {
                 return Result.error(ResultCode.ERROR); //密码不正确
@@ -75,6 +75,13 @@ public class AccountController {
         Account account = accountService.findAccountByUsername(username);
         return Result.success(account);
     }
+
+    @GetMapping("/accountList")
+    @SaCheckRole("admin")
+    public Result accountList() {
+        return Result.success(accountService.findAllAccount());
+    }
+
 //
 //    @PutMapping("/update")
 //    public Mono<Result> update(@RequestBody Account account) {
