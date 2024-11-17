@@ -22,7 +22,7 @@ import java.util.Date;
 public class NovelController {
 
     // 定义上传文件的存储路径
-    private static final String UPLOAD_DIR = "/var/code-main/novelUpload";
+    private static final String UPLOAD_DIR = "D:\\Github\\novelUpload";
 
     @Resource
     private NovelService novelService;
@@ -67,5 +67,20 @@ public class NovelController {
     @GetMapping("/list")
     public Result list(){
         return Result.success(novelService.list());
+    }
+
+    @GetMapping("/getChapterProcessing")
+    public Result getChapterProcessing(@RequestParam("id") String id){
+        return Result.success(novelService.getChapterProcessing(id));
+    }
+
+    @GetMapping("/getChapterList")
+    public Result getChapterList(@RequestParam("id") String id){
+        return Result.success(novelService.getChapterList(id));
+    }
+
+    @GetMapping("getChapter")
+    public Result getChapter(@RequestParam("id") String id){
+        return Result.success(novelService.getChapter(id));
     }
 }

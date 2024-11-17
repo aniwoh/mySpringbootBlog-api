@@ -7,10 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aniwoh.myspringbootblogapi.Repository.BookshelfRepository;
 import org.aniwoh.myspringbootblogapi.Repository.ChapterRepository;
 import org.aniwoh.myspringbootblogapi.Repository.ReadingProcessRepository;
-import org.aniwoh.myspringbootblogapi.entity.BookShelf;
-import org.aniwoh.myspringbootblogapi.entity.BookShelfVo;
-import org.aniwoh.myspringbootblogapi.entity.Chapter;
-import org.aniwoh.myspringbootblogapi.entity.ReadingProcess;
+import org.aniwoh.myspringbootblogapi.entity.*;
 import org.mozilla.universalchardet.UniversalDetector;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,16 +51,36 @@ public class NovelService {
     public List<BookShelfVo> list(){
         List<BookShelf> bookShelves = bookshelfRepository.findAll();
         List<BookShelfVo> bookShelfVos = new ArrayList<>();
-        bookShelves.stream().peek(bookShelf -> {
+        bookShelves.forEach(bookShelf -> {
             BookShelfVo bookShelfVo = new BookShelfVo();
             BeanUtils.copyProperties(bookShelf,bookShelfVo);
-            Optional<Chapter> optional =chapterRepository.findTopByNovelIdOrderByIndexDesc(bookShelf.getId());
-            optional.ifPresent(bookShelfVo::setLastChapter);
+            Chapter chapter =chapterRepository.findFirstByNovelIdOrderByIndexDesc(bookShelf.getId());
+            bookShelfVo.setChapterCount(chapterRepository.findByNovelId(bookShelf.getId()).size());
+            bookShelfVo.setLastChapter(chapter);
             ReadingProcess readingProcess=readingProcessRepository.findByNovelId(bookShelf.getId());
-            chapterRepository.findById(readingProcess.getChapterId()).ifPresent(bookShelfVo::setProcessChapter);
+            if (readingProcess!=null){
+                chapterRepository.findById(readingProcess.getChapterId()).ifPresent(bookShelfVo::setProcessChapter);
+            }
             bookShelfVos.add(bookShelfVo);
         });
         return bookShelfVos;
+    }
+
+    public ReadingProcess getChapterProcessing(String id){
+        return readingProcessRepository.findByNovelId(id);
+    }
+
+    public List<ChapterListVo> getChapterList(String novelId) {
+        List<ChapterListVo> chapterListVos = new ArrayList<>();
+        chapterRepository.findByNovelId(novelId).forEach(chapter -> {
+            ChapterListVo chapterListVo = new ChapterListVo();
+            BeanUtils.copyProperties(chapter,chapterListVo);
+            chapterListVos.add(chapterListVo);
+        });
+        return chapterListVos;
+    }
+    public Chapter getChapter(String chapterId) {
+        return chapterRepository.findById(chapterId).orElse(null);
     }
 
     private void doParse(BookShelf book) {
@@ -146,4 +163,6 @@ public class NovelService {
         detector.dataEnd();
         return detector.getDetectedCharset();
     }
+
+
 }
