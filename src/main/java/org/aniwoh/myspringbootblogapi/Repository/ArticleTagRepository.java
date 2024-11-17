@@ -1,6 +1,5 @@
 package org.aniwoh.myspringbootblogapi.Repository;
 
-import org.aniwoh.myspringbootblogapi.entity.Article;
 import org.aniwoh.myspringbootblogapi.entity.ArticleTag;
 import org.springframework.data.mongodb.repository.MongoRepository;
 

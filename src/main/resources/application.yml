@@ -15,6 +15,10 @@ spring:
   thymeleaf:
     prefix: classpath:/static/
     suffix: .html
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
 
 jwt:
   secret-key : "uS+z+xPz2VtY0ndD2/cW/nH1dVo+Xb/xkF6Ex2n6Nzg="

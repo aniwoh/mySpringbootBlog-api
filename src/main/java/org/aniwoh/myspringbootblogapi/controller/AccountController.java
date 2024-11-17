@@ -79,6 +79,8 @@ public class AccountController {
     @GetMapping("/accountList")
     @SaCheckRole("admin")
     public Result accountList() {
+        log.info(StpUtil.searchSessionId("",0,-1,false).toString());
+        log.info(StpUtil.getRoleList().toString());
         return Result.success(accountService.findAllAccount());
     }
 
