@@ -35,5 +35,7 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           target: ${{ secrets.TARGET_DIR }}
           source: target/*.jar
+          strip_components: 1
+          args: "--overwrite"
 
       # Run the JAR on the serve
