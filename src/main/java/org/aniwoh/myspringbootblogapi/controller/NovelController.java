@@ -1,10 +1,12 @@
 package org.aniwoh.myspringbootblogapi.controller;
 
+
 import jakarta.annotation.Resource;
 import org.aniwoh.myspringbootblogapi.Repository.BookshelfRepository;
 import org.aniwoh.myspringbootblogapi.entity.BookShelf;
 import org.aniwoh.myspringbootblogapi.entity.Result;
 import org.aniwoh.myspringbootblogapi.service.NovelService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +24,8 @@ import java.util.Date;
 public class NovelController {
 
     // 定义上传文件的存储路径
-    private static final String UPLOAD_DIR = "D:\\Github\\novelUpload";
+    @Value("${uploadPath}")
+    private static String UPLOAD_DIR;
 
     @Resource
     private NovelService novelService;
