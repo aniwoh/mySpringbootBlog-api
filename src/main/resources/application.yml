@@ -1,17 +1,10 @@
 spring:
   application:
     name: mySpringbootBlog-api
+  profiles:
+    active: prd
   mvc:
     static-path-pattern: /static/**
-  data:
-    mongodb:
-      host: 192.168.1.120
-      port: 27017
-      database: learnspringweb
-    redis:
-      host: 192.168.1.120
-      port: 6379
-      password: 123456
   thymeleaf:
     prefix: classpath:/static/
     suffix: .html
