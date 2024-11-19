@@ -19,7 +19,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/article")
-@CrossOrigin(origins = "http://localhost:5173")
 @Slf4j
 public class ArticleController {
     @Resource

@@ -2,7 +2,7 @@ spring:
   application:
     name: mySpringbootBlog-api
   profiles:
-    active: prd
+    active: dev
   mvc:
     static-path-pattern: /static/**
   thymeleaf:
