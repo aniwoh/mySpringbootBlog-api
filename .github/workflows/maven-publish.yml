@@ -47,5 +47,5 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           script: |
             cd ${{ secrets.TARGET_DIR }}
-            pkill -f ${{ secrets.JAR_NAME }} || true
-            nohup java -jar ${{ secrets.JAR_NAME }} > app.log 2>&1 &
+            pkill -f "java.*${{ secrets.JAR_NAME }}" || true
+            nohup setsid java -jar ${{ secrets.JAR_NAME }} > app.log 2>&1 &
