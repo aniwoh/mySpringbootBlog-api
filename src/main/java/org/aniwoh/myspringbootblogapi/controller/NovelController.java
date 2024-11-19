@@ -2,6 +2,7 @@ package org.aniwoh.myspringbootblogapi.controller;
 
 
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.aniwoh.myspringbootblogapi.Repository.BookshelfRepository;
 import org.aniwoh.myspringbootblogapi.entity.BookShelf;
 import org.aniwoh.myspringbootblogapi.entity.Result;
@@ -21,11 +22,12 @@ import java.util.Date;
 
 @RestController
 @RequestMapping("/novel")
+@Slf4j
 public class NovelController {
 
-    // 定义上传文件的存储路径
+    // 定义上传文件的存储路径,value注解不可作用域static
     @Value("${uploadPath}")
-    private static String UPLOAD_DIR;
+    private String UPLOAD_DIR;
 
     @Resource
     private NovelService novelService;
