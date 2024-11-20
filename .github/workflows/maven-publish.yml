@@ -47,6 +47,5 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           script: |
             cd ${{ secrets.TARGET_DIR }}
-            pkill -f ${{ secrets.JAR_NAME }} || true
-            sleep 3
+            JAR_NAME="${{ secrets.JAR_NAME }}"; PID=$(ps aux | grep "$JAR_NAME" | grep -v grep | awk '{print $2}'); if [ -n "$PID" ]; then kill -9 $PID && echo "进程 $PID 已被杀死"; else echo "未找到与 $JAR_NAME 相关的进程"; fi
             nohup java -jar ${{ secrets.JAR_NAME }} > app.log 2>&1 &
