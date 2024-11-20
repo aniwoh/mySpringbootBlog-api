@@ -6,14 +6,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.aniwoh.myspringbootblogapi.Repository.BookshelfRepository;
 import org.aniwoh.myspringbootblogapi.entity.BookShelf;
 import org.aniwoh.myspringbootblogapi.entity.Result;
+import org.aniwoh.myspringbootblogapi.entity.ResultCode;
 import org.aniwoh.myspringbootblogapi.service.NovelService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -31,14 +30,17 @@ public class NovelController {
 
     @Resource
     private NovelService novelService;
-    @Resource
-    private BookshelfRepository bookshelfRepository;
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+    public Result uploadFile(@RequestParam("file") MultipartFile file) {
         // 检查文件是否为空
         if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body("文件为空，请重新上传！");
+            return Result.error(ResultCode.ERROR,"文件为空，请重新上传！");
+        }
+        // 获取 MIME 类型
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.equals("text/plain")) {
+            return Result.error(ResultCode.ERROR,"类型错误，请重新上传！");
         }
 
         try {
@@ -59,13 +61,13 @@ public class NovelController {
                 file.transferTo(filePath.toFile());
                 bookShelf.setFilePath(filePath.toString());
                 novelService.parseNovel(bookShelf);
-                return ResponseEntity.ok("文件上传成功: " + fileName);
+                return Result.success("文件上传成功: " + fileName);
             }else {
-                return ResponseEntity.status(500).body("文件上传失败");
+                return Result.error(ResultCode.ERROR,"文件上传失败");
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("文件上传失败：" + e.getMessage());
+            log.error(e.getMessage());
+            return Result.error(ResultCode.ERROR,e.getMessage());
         }
     }
 

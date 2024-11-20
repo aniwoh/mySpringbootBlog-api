@@ -10,8 +10,8 @@ spring:
     suffix: .html
   servlet:
     multipart:
-      max-file-size: 20MB
-      max-request-size: 20MB
+      max-file-size: 50MB
+      max-request-size: 50MB
 
 jwt:
   secret-key : "uS+z+xPz2VtY0ndD2/cW/nH1dVo+Xb/xkF6Ex2n6Nzg="
