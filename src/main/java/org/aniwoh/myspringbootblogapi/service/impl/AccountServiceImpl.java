@@ -32,6 +32,7 @@ public class AccountServiceImpl implements AccountService {
         Integer uid = counterService.getNextSequence("account_uid");
         Account account = new Account(username, BCrypt.hashpw(password));
         account.setUid(uid);
+        accountRepository.save(account);
     }
 
     @Override
