@@ -26,7 +26,7 @@ public class StpInterfaceImpl implements StpInterface {
         //按level赋予不同的角色
         Account account = accountService.findAccountByUsername((String) loginId);
         int level = account.getLevel();
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         if (level == 0){
             list.add("guest.*");
         } else if (level >= 7){
@@ -47,7 +47,7 @@ public class StpInterfaceImpl implements StpInterface {
     public List<String> getRoleList(Object loginId, String loginType) {
         Account account = accountService.findAccountByUsername((String) loginId);
         int level = account.getLevel();
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         if (level == 0){
             list.add("guest");
         } else if (level >= 7){

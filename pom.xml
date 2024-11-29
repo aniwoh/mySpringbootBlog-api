@@ -57,7 +57,7 @@
 			<version>1.39.0</version>
 		</dependency>
 		<dependency>
-			<!--安全框架sa-token提供的jackson序列化方法的redis依赖-->
+			<!--安全框架sa-token提供的jackson序列化方法的redis依赖,引入后配置好redis后无需手动配置，自动保存-->
 			<groupId>cn.dev33</groupId>
 			<artifactId>sa-token-redis-jackson</artifactId>
 			<version>1.39.0</version>
@@ -97,6 +97,7 @@
             <version>6.1.6</version>
         </dependency>
 		<dependency>
+			<!--用于解析文件类型-->
 			<groupId>com.googlecode.juniversalchardet</groupId>
 			<artifactId>juniversalchardet</artifactId>
 			<version>1.0.3</version>

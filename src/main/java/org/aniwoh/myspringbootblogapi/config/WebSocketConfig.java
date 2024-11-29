@@ -17,7 +17,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         // 注册 WebSocket 的路径
-        registry.addHandler(readingProgressWebSocketHandler, "/websocket")
+        registry.addHandler(readingProgressWebSocketHandler, "/websocket/readingProgress")
                 .setAllowedOrigins("*"); // 允许跨域
     }
 }

@@ -1,6 +1,7 @@
 package org.aniwoh.myspringbootblogapi.controller;
 
 
+import cn.dev33.satoken.annotation.SaCheckRole;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.aniwoh.myspringbootblogapi.Repository.BookshelfRepository;
@@ -22,6 +23,7 @@ import java.util.Date;
 @RestController
 @RequestMapping("/novel")
 @Slf4j
+@SaCheckRole("admin")
 public class NovelController {
 
     // 定义上传文件的存储路径,value注解不可作用域static

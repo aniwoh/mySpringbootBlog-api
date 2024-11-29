@@ -35,7 +35,7 @@ public class ReadingProgressWebSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         // 解析客户端发送的进度数据
         String payload = message.getPayload();
-        log.info("返回值{}",payload);
+//        log.info("返回值{}",payload);
         ReadingProcess progress = JSON.parseObject(payload, ReadingProcess.class);
 
         // 设置更新时间
