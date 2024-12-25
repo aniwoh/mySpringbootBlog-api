@@ -1,6 +1,5 @@
 package org.aniwoh.myspringbootblogapi.service;
 
-import cn.hutool.core.io.CharsetDetector;
 import cn.hutool.core.io.FileUtil;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -10,17 +9,14 @@ import org.aniwoh.myspringbootblogapi.Repository.ReadingProcessRepository;
 import org.aniwoh.myspringbootblogapi.entity.*;
 import org.mozilla.universalchardet.UniversalDetector;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -151,6 +147,7 @@ public class NovelService {
             chapter.setTitle(title);
             chapter.setContent(chapterContent);
             chapter.setNovelId(novelId);
+            chapter.setIndex(index);
             chapters.add(chapter);
         }
         return chapters;
