@@ -10,3 +10,14 @@ spring:
       password: 123456
 
 uploadPath: D:\Github\novelUpload
+
+sa-token:
+  cookie:
+    same-site: None
+    secure: true
+
+server:
+  reactive:
+    session:
+      cookie:
+        same-site: none
