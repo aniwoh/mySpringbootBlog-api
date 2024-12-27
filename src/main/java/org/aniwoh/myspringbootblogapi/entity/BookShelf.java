@@ -13,6 +13,7 @@ public class BookShelf {
     @Id
     private String id;
     private String title;
+    private String author;
     private String filePath;
     private String status; //解析状态（e.g., "UPLOADED", "PARSING", "COMPLETED", "FAILED"）
     @JSONField(format = "yyyy.MM.dd HH:mm")

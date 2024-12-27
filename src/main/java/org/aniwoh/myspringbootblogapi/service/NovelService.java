@@ -90,10 +90,13 @@ public class NovelService {
             BookShelf savedBook = bookshelfRepository.save(book);
             String charsetName = detectEncoding(savedBook.getFilePath());
             String content = readFileContent(Path.of(savedBook.getFilePath()),charsetName);
+            // 获取作者
+            String author = getAuthor(content);
             List<Chapter> chapters = parseChapters(content,savedBook.getId());
             chapterRepository.saveAll(chapters);
             // 更新状态为 COMPLETED
             book.setStatus("COMPLETED");
+            book.setAuthor(author);
             bookshelfRepository.save(book);
         } catch (Exception e) {
             // 更新状态为 FAILED
@@ -113,50 +116,61 @@ public class NovelService {
                 content.append(line).append("\n");
             }
         }
-        log.info(path+"内容获取成功");
+        log.info("{}内容获取成功", path);
         return content.toString();
+    }
+
+    private String getAuthor(String content) {
+        Pattern pattern = Pattern.compile("作者：(.*?)\n");
+        Matcher matcher = pattern.matcher(content);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
     }
 
     private List<Chapter> parseChapters(String content,String novelId) {
         List<Chapter> chapters = new ArrayList<>();
 
         // 使用正则表达式按章节拆分
-        Pattern pattern = Pattern.compile("第[一二三四五六七八九十百千零0-9]+章.*");
+        Pattern pattern = Pattern.compile("第[一二三四五六七八九十百千零0-9]+[章卷回].*", Pattern.MULTILINE);
         Matcher matcher = pattern.matcher(content);
 
-        int start = 0; // 当前章节的开始位置
-        String title = null;
+//        int start = 0; // 当前章节的开始位置
+//        String title = null;
+//        Integer index = 0;
+
+        int lastMatchEnd = 0;
         Integer index = 0;
 
+        // 遍历匹配章节标题
         while (matcher.find()) {
-            if (title != null) {
-                // 获取章节内容
-                String chapterContent = content.substring(start, matcher.start()).trim();
-                Chapter chapter = new Chapter();
-                chapter.setTitle(title.trim());
-                chapter.setContent(chapterContent);
-                chapter.setNovelId(novelId);
-                chapter.setIndex(index);
-                index++;
-                chapters.add(chapter);
-            }
-            title = matcher.group(); // 匹配到的章节标题
-            start = matcher.end();   // 下一章节的开始位置
-        }
+            // 获取当前章节标题
+            String title = matcher.group();
 
-        // 添加最后一章
-        if (title != null) {
-            String chapterContent = content.substring(start).trim();
+            // 如果有前一个章节，提取其内容
+            if (!chapters.isEmpty()) {
+                Chapter lastChapter = chapters.get(chapters.size() - 1);
+                lastChapter.setContent(content.substring(lastMatchEnd, matcher.start()).trim());
+            }
             Chapter chapter = new Chapter();
             chapter.setTitle(title);
-            chapter.setContent(chapterContent);
             chapter.setNovelId(novelId);
+            chapter.setContent("");
+            chapter.setIndex(index);
+            index++;
             chapters.add(chapter);
+            lastMatchEnd = matcher.end();
+        }
+
+        // 最后一章的内容提取
+        if (!chapters.isEmpty() && lastMatchEnd < content.length()) {
+            chapters.get(chapters.size() - 1).setContent(content.substring(lastMatchEnd).trim());
         }
         return chapters;
     }
 
-    private String detectEncoding(String filePath) throws IOException {
+    private String detectEncoding(String filePath) {
         UniversalDetector detector = new UniversalDetector(null);
         byte[] bytes = FileUtil.readBytes(new File(filePath));
         detector.handleData(bytes,0,2000);
