@@ -133,7 +133,7 @@ public class NovelService {
         List<Chapter> chapters = new ArrayList<>();
 
         // 使用正则表达式按章节拆分
-        Pattern pattern = Pattern.compile("第[一二三四五六七八九十百千零0-9]+[章卷回].*", Pattern.MULTILINE);
+        Pattern pattern = Pattern.compile("^\\s*第[一二三四五六七八九十百千零0-9]+[章卷回册].*", Pattern.MULTILINE);
         Matcher matcher = pattern.matcher(content);
 
 //        int start = 0; // 当前章节的开始位置
