@@ -37,12 +37,12 @@ public class NovelController {
     public Result uploadFile(@RequestParam("file") MultipartFile file) {
         // 检查文件是否为空
         if (file.isEmpty()) {
-            return Result.error(ResultCode.ERROR,"文件为空，请重新上传！");
+            return Result.error(ResultCode.UPLOAD_EMPTY);
         }
         // 获取 MIME 类型
         String contentType = file.getContentType();
         if (contentType == null || !contentType.equals("text/plain")) {
-            return Result.error(ResultCode.ERROR,"类型错误，请重新上传！");
+            return Result.error(ResultCode.UPLOAD_TYPE_ERROR);
         }
 
         try {

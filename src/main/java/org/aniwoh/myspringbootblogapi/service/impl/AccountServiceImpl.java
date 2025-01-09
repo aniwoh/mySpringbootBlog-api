@@ -29,10 +29,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void addUser(String username, String password) {
-//        Integer uid = counterService.getNextSequence("account_uid");
-//        Account account = new Account(username, BCrypt.hashpw(password));
-//        account.setUid(uid);
-//        accountRepository.save(account);
+        Integer uid = counterService.getNextSequence("account_uid");
+        Account account = new Account(username, BCrypt.hashpw(password));
+        account.setUid(uid);
+        accountRepository.save(account);
     }
 
     @Override

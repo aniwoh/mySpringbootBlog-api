@@ -27,8 +27,8 @@ public class ReadingProgressWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         // 连接建立后保存会话
-        log.info("新建了websocket连接{}", session.getId());
         sessions.put(session.getId(), session);
+        log.info("新建了websocket连接{},当前连接池{}",session.getId(),sessions);
     }
 
     @Override

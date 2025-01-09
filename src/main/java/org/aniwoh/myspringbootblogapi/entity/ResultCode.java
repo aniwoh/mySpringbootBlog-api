@@ -2,8 +2,8 @@ package org.aniwoh.myspringbootblogapi.entity;
 
 public enum ResultCode {
     /* 成功状态码 */
-    SUCCESS(0, "成功"),
-    ERROR(1, "失败"),
+    SUCCESS(1, "成功"),
+    ERROR(-1, "失败"),
 
     /* 参数错误：10001-19999 */
     PARAM_IS_INVALID(10001, "参数无效"),
@@ -44,6 +44,8 @@ public enum ResultCode {
 
     /* 文件上传 */
     UPLOAD_ERROR(80001, "上传失败"),
+    UPLOAD_TYPE_ERROR(80002, "上传类型错误"),
+    UPLOAD_EMPTY(80003, "上传文件为空"),
 
     SESSION_TIME_OUT(90001, "Session超时");
 

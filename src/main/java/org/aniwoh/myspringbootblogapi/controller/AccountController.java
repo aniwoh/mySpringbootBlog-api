@@ -34,8 +34,8 @@ public class AccountController {
         Account account = accountService.findAccountByUsername(loginRequest.getUsername());
         if (account == null){
             try {
-                accountService.addUser(loginRequest.getUsername(),loginRequest.getPassword());
-                return Result.success();
+//                accountService.addUser(loginRequest.getUsername(),loginRequest.getPassword());
+                return Result.error(ResultCode.ERROR,"注册功能暂未开放");
             } catch (Exception e){
                 return Result.error(ResultCode.ERROR,e.getMessage());
             }
@@ -50,13 +50,13 @@ public class AccountController {
         String password = loginRequest.getPassword();
         Account account = accountService.findAccountByUsername(username);
         if (account == null){
-            return Result.error(ResultCode.ERROR);
+            return Result.error(ResultCode.ERROR,"用户不存在或密码错误");
         } else {
             if (BCrypt.checkpw(password, account.getPassword())) {
                 StpUtil.login(username);
                 return Result.success();
             } else {
-                return Result.error(ResultCode.ERROR); //密码不正确
+                return Result.error(ResultCode.ERROR,"用户不存在或密码错误"); //密码不正确
             }
         }
    }
