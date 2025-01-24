@@ -48,7 +48,6 @@ jobs:
           key: ${{ secrets.SERVER_KEY }}
           target: ${{ secrets.TARGET_DIR }}
           source: "/tmp/myspringbootblog-api.tar"
-          strip_components: 1
           args: "--overwrite"
 
       - name: Run docker on server
