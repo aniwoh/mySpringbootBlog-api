@@ -29,8 +29,16 @@ jobs:
       - name: Build the Docker image
         run: docker build -t myspringbootblog-api .
 
+      - name: Check Docker Image
+        run: |
+          docker images | grep myspringbootblog-api
+
       - name: Save images
         run: docker save -o /tmp/myspringbootblog-api.tar myspringbootblog-api
+
+      - name: Verify Saved Tar File
+        run: |
+          ls -lh /tmp/myspringbootblog-api.tar
 
       - name: Upload images to server
         uses: appleboy/scp-action@v0.1.7
