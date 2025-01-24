@@ -30,7 +30,7 @@ jobs:
         run: docker build -t myspringbootblog-api .
 
       - name: Save images
-        run: docker save -o myspringbootblog-api.tar myspringbootblog-api
+        run: docker save -o /tmp/myspringbootblog-api.tar myspringbootblog-api
 
       - name: Upload images to server
         uses: appleboy/scp-action@v0.1.7
@@ -39,7 +39,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_KEY }}
           target: ${{ secrets.TARGET_DIR }}
-          source: myspringbootblog-api.tar
+          source: /tmp/myspringbootblog-api.tar
           strip_components: 1
           args: "--overwrite"
 
