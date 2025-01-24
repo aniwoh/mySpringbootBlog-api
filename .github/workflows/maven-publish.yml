@@ -27,10 +27,10 @@ jobs:
         run: mvn clean package -DskipTests
 
       - name: Build the Docker image
-        run: docker build -t mySpringbootBlog-api .
+        run: docker build -t myspringbootblog-api .
 
       - name: Save images
-        run: docker save -o mySpringbootBlog-api.tar mySpringbootBlog-api
+        run: docker save -o myspringbootblog-api.tar myspringbootblog-api
 
       - name: Upload images to server
         uses: appleboy/scp-action@v0.1.7
@@ -39,7 +39,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_KEY }}
           target: ${{ secrets.TARGET_DIR }}
-          source: mySpringbootBlog-api.tar
+          source: myspringbootblog-api.tar
           strip_components: 1
           args: "--overwrite"
 
@@ -50,8 +50,8 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_KEY }}
           script: |
-            docker stop mySpringbootBlog-api
-            docker rm mySpringbootBlog-api
-            docker rmi mySpringbootBlog-api
-            docker load -i mySpringbootBlog-api.tar
-            docker run -d --name mySpringbootBlog-api -p 8888:8888 -v ${{ secrets.TARGET_DIR }}/uploadPath:/uploadPath mySpringbootBlog-api
+            docker stop myspringbootblog-api
+            docker rm myspringbootblog-api
+            docker rmi myspringbootblog-api
+            docker load -i myspringbootblog-api.tar
+            docker run -d --name myspringbootblog-api -p 8888:8888 -v ${{ secrets.TARGET_DIR }}/uploadPath:/uploadPath myspringbootblog-api
