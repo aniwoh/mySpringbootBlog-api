@@ -39,6 +39,7 @@ jobs:
       - name: Verify Saved Tar File
         run: |
           ls -lh myspringbootblog-api.tar
+          chmod 777 myspringbootblog-api.tar
 
       - name: Upload images to server
         uses: appleboy/scp-action@v0.1.7
