@@ -34,11 +34,11 @@ jobs:
           docker images | grep myspringbootblog-api
 
       - name: Save images
-        run: docker save -o /tmp/myspringbootblog-api.tar myspringbootblog-api
+        run: docker save -o myspringbootblog-api.tar myspringbootblog-api
 
       - name: Verify Saved Tar File
         run: |
-          ls -lh /tmp/myspringbootblog-api.tar
+          ls -lh myspringbootblog-api.tar
 
       - name: Upload images to server
         uses: appleboy/scp-action@v0.1.7
@@ -47,7 +47,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_KEY }}
           target: ${{ secrets.TARGET_DIR }}
-          source: "/tmp/myspringbootblog-api.tar"
+          source: myspringbootblog-api.tar
           args: "--overwrite"
 
       - name: Run docker on server
