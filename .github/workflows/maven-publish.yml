@@ -26,26 +26,32 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
-      # Upload the JAR to the server
-      - name: Upload JAR to server
+      - name: Build the Docker image
+        run: docker build -t mySpringbootBlog-api .
+
+      - name: Save images
+        run: docker save -o mySpringbootBlog-api.tar mySpringbootBlog-api
+
+      - name: Upload images to server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_KEY }}
           target: ${{ secrets.TARGET_DIR }}
-          source: target/*.jar
+          source: mySpringbootBlog-api.tar
           strip_components: 1
           args: "--overwrite"
 
-      # Run the JAR on the serve
-      - name: Run JAR on server
+      - name: Run docker on server
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_KEY }}
           script: |
-            cd ${{ secrets.TARGET_DIR }}
-            JAR_NAME="${{ secrets.JAR_NAME }}"; PID=$(ps aux | grep "$JAR_NAME" | grep -v grep | awk '{print $2}'); if [ -n "$PID" ]; then kill -9 $PID && echo "进程 $PID 已被杀死"; else echo "未找到与 $JAR_NAME 相关的进程"; fi
-            nohup java -jar ${{ secrets.JAR_NAME }} > app.log 2>&1 &
+            docker stop mySpringbootBlog-api
+            docker rm mySpringbootBlog-api
+            docker rmi mySpringbootBlog-api
+            docker load -i mySpringbootBlog-api.tar
+            docker run -d --name mySpringbootBlog-api -p 8888:8888 -v ${{ secrets.TARGET_DIR }}/uploadPath:/uploadPath mySpringbootBlog-api
