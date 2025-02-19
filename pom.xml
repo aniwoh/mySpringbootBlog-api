@@ -102,6 +102,31 @@
 			<artifactId>juniversalchardet</artifactId>
 			<version>1.0.3</version>
 		</dependency>
+		<!-- OpenTelemetry SDK -->
+		<dependency>
+			<groupId>io.opentelemetry</groupId>
+			<artifactId>opentelemetry-api</artifactId>
+			<version>1.28.0</version> <!-- 使用最新版本 -->
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry</groupId>
+			<artifactId>opentelemetry-sdk</artifactId>
+			<version>1.28.0</version>
+		</dependency>
+
+		<!-- OpenTelemetry Spring Boot Starter (用于自动化集成) -->
+		<dependency>
+			<groupId>io.opentelemetry.instrumentation</groupId>
+			<artifactId>opentelemetry-spring-boot-starter</artifactId>
+			<version>2.9.0</version>
+		</dependency>
+
+		<!-- Prometheus Exporter (导出 Prometheus 格式的指标) -->
+		<dependency>
+			<groupId>io.opentelemetry</groupId>
+			<artifactId>opentelemetry-exporter-prometheus</artifactId>
+			<version>1.9.0-alpha</version>
+		</dependency>
     </dependencies>
 
 	<build>

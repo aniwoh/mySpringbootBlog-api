@@ -34,3 +34,16 @@ sa-token:
   is-log: true
 server:
   port: 8888
+otel:
+  exporter:
+    prometheus:
+      endpoint: http://192.168.1.120:9090/metrics
+  metrics:
+    export:
+      interval: 5s
+
+  instrumentation:
+    spring-web:
+      enabled: true
+    spring-webmvc:
+      enabled: true
