@@ -11,6 +11,12 @@ spring:
 sa-token:
   cookie:
     same-site: None
-    secure: false
+    secure: true
+
+server:
+  reactive:
+    session:
+      cookie:
+        same-site: none
 
 uploadPath: D:\Github\novelUpload
