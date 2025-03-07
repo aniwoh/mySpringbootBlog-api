@@ -4,6 +4,8 @@ import cn.dev33.satoken.annotation.SaCheckRole;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
+import org.aniwoh.myspringbootblogapi.Aspect.CostTime;
+import org.aniwoh.myspringbootblogapi.Aspect.RateLimit;
 import org.aniwoh.myspringbootblogapi.entity.Article;
 import org.aniwoh.myspringbootblogapi.entity.ArticleTag;
 import org.aniwoh.myspringbootblogapi.entity.Result;
@@ -12,6 +14,7 @@ import org.aniwoh.myspringbootblogapi.service.ArticleService;
 import org.aniwoh.myspringbootblogapi.service.TagService;
 import org.aniwoh.myspringbootblogapi.utils.AutoReload;
 import org.aniwoh.myspringbootblogapi.vo.ArticleVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,17 +31,15 @@ public class ArticleController {
     private TagService tagService;
 
     @GetMapping("/list")
+    @CostTime
+    @RateLimit(limit = 2, seconds = 10)
     public Result articleList() {
         //获取文章数据
         List<Article> articleList = articleService.Articlelist();
         List<ArticleVo> articleVoList = articleList.stream().map(article -> {
             List<String> tagNames = tagService.findTagNamesByArticleId(article.getId());
             ArticleVo articleVo = new ArticleVo();
-            try {
-                AutoReload.reload(article, articleVo);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
+            BeanUtils.copyProperties(article, articleVo);
             articleVo.setTagNames(tagNames);
             articleVo.setBody(null); // 设置 body 为 null
             return articleVo;

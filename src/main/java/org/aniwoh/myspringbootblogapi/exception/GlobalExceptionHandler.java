@@ -22,6 +22,11 @@ import cn.dev33.satoken.exception.NotSafeException;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(RateLimitException.class)
+    public ResponseEntity<Result> handlerException(RateLimitException e) {
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(Result.error(ResultCode.ERROR,"访问过于频繁，请稍后再试"));
+    }
+
     // 拦截：未登录异常
     @ExceptionHandler(NotLoginException.class)
     public ResponseEntity<Result> handlerException(NotLoginException e) {

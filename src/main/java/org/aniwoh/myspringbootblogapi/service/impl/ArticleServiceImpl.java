@@ -1,6 +1,7 @@
 package org.aniwoh.myspringbootblogapi.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.aniwoh.myspringbootblogapi.Aspect.CostTime;
 import org.aniwoh.myspringbootblogapi.Repository.ArticleRepository;
 import org.aniwoh.myspringbootblogapi.entity.Article;
 import org.aniwoh.myspringbootblogapi.service.ArticleService;
@@ -16,6 +17,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     ArticleRepository articleRepository;
     @Override
+    @CostTime
     public List<Article> Articlelist() {
         return articleRepository.findAll();
     }
