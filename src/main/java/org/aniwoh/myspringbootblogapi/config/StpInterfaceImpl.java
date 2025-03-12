@@ -46,6 +46,9 @@ public class StpInterfaceImpl implements StpInterface {
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
         Account account = accountService.findAccountByUsername((String) loginId);
+        if (account==null){
+            return null;
+        }
         int level = account.getLevel();
         List<String> list = new ArrayList<>();
         if (level == 0){

@@ -1,6 +1,7 @@
 package org.aniwoh.myspringbootblogapi.controller;
 
 import com.alibaba.fastjson2.JSON;
+import jakarta.annotation.Nonnull;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.aniwoh.myspringbootblogapi.Repository.ReadingProcessRepository;
@@ -25,7 +26,7 @@ public class ReadingProgressWebSocketHandler extends TextWebSocketHandler {
     private ReadingProcessRepository readingProcessRepository; // MongoDB repository
 
     @Override
-    public void afterConnectionEstablished(WebSocketSession session) {
+    public void afterConnectionEstablished(@Nonnull WebSocketSession session) {
         // 连接建立后保存会话
         sessions.put(session.getId(), session);
         log.info("新建了websocket连接{},当前连接池{}",session.getId(),sessions);
@@ -46,10 +47,17 @@ public class ReadingProgressWebSocketHandler extends TextWebSocketHandler {
         session.sendMessage(new TextMessage(JSON.toJSONString(savedProcess)));
     }
     @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+    public void afterConnectionClosed(WebSocketSession session, @Nonnull CloseStatus status) {
         // 连接关闭后移除会话
-        sessions.remove(session.getId());
-        System.out.println("Disconnected: " + session.getId());
+        WebSocketSession webSocketSession = sessions.remove(session.getId());
+        if (webSocketSession != null) {
+            try {
+                webSocketSession.close();
+                log.info("已关闭连接:{}",session.getId());
+            } catch (Exception e) {
+                log.error("关闭连接失败", e);
+            }
+        }
         log.info("当前连接池{}",sessions);
     }
 }
