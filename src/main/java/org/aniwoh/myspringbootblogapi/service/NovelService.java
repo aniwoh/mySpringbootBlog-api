@@ -1,7 +1,7 @@
 package org.aniwoh.myspringbootblogapi.service;
 
-import cn.hutool.core.io.CharsetDetector;
 import cn.hutool.core.io.FileUtil;
+import com.alibaba.fastjson2.JSON;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.aniwoh.myspringbootblogapi.Repository.BookshelfRepository;
@@ -10,17 +10,18 @@ import org.aniwoh.myspringbootblogapi.Repository.ReadingProcessRepository;
 import org.aniwoh.myspringbootblogapi.entity.*;
 import org.mozilla.universalchardet.UniversalDetector;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.util.StreamUtils;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,13 +38,13 @@ public class NovelService {
     @Resource
     private ReadingProcessRepository readingProcessRepository;
 
-    @Async // 异步执行解析任务
+    @Async("customTaskExecutor") // 异步执行解析任务
     public void parseNovel(BookShelf bookShelf) throws IOException {
         bookShelf.setCreateDate(LocalDateTime.now());
         bookShelf.setUpdateDate(LocalDateTime.now());
         bookShelf.setStatus("UPLOADED");
         bookshelfRepository.save(bookShelf);
-
+        log.info("开始解析文件：{}", bookShelf.getFilePath());
         // 异步解析文件
         doParse(bookShelf);
     }
@@ -79,6 +80,7 @@ public class NovelService {
         });
         return chapterListVos;
     }
+
     public Chapter getChapter(String chapterId) {
         return chapterRepository.findById(chapterId).orElse(null);
     }
@@ -101,6 +103,7 @@ public class NovelService {
         } catch (Exception e) {
             // 更新状态为 FAILED
             book.setStatus("FAILED");
+            log.error(e.getMessage());
             bookshelfRepository.save(book);
         }
     }
@@ -133,12 +136,8 @@ public class NovelService {
         List<Chapter> chapters = new ArrayList<>();
 
         // 使用正则表达式按章节拆分
-        Pattern pattern = Pattern.compile("^\\s*第[一二三四五六七八九十百千零0-9]+[章卷回册].*", Pattern.MULTILINE);
+        Pattern pattern = Pattern.compile(getTocRule(content),Pattern.MULTILINE);
         Matcher matcher = pattern.matcher(content);
-
-//        int start = 0; // 当前章节的开始位置
-//        String title = null;
-//        Integer index = 0;
 
         int lastMatchEnd = 0;
         Integer index = 0;
@@ -173,9 +172,41 @@ public class NovelService {
     private String detectEncoding(String filePath) {
         UniversalDetector detector = new UniversalDetector(null);
         byte[] bytes = FileUtil.readBytes(new File(filePath));
-        detector.handleData(bytes,0,2000);
+        if (bytes.length == 0) {
+            throw new RuntimeException("文件内容为空");
+        }
+        int length = Math.min(bytes.length, 2000);
+        detector.handleData(bytes,0,length);
         detector.dataEnd();
         return detector.getDetectedCharset();
+    }
+
+    private String getTocRule(String content) {
+        try {
+            ClassPathResource resource = new ClassPathResource("defaultData/txtRole.json");
+            String jsonContent = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
+            List<TxtRule> txtRules = JSON.parseArray(jsonContent, TxtRule.class);
+            Collections.reverse(txtRules);
+            int maxCs = 0;
+            String tocPattern = "";
+            for (TxtRule txtRule : txtRules) {
+                if (txtRule.getEnable()) {
+                    Pattern pattern = Pattern.compile(txtRule.getRule(), Pattern.MULTILINE);
+                    Matcher matcher = pattern.matcher(content);
+                    int cs = 0;
+                    while (matcher.find()) {
+                        cs++;
+                    }
+                    if (maxCs < cs) {
+                        maxCs = cs;
+                        tocPattern = txtRule.getRule();
+                    }
+                }
+            }
+            return tocPattern;
+        }catch (IOException ioException) {
+            throw new RuntimeException(ioException.getMessage());
+        }
     }
 
 
