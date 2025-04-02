@@ -89,4 +89,9 @@ public class NovelController {
     public Result getChapter(@RequestParam("id") String id){
         return Result.success(novelService.getChapter(id));
     }
+
+    @GetMapping("delete")
+    public Result delete(@RequestParam("id") String id){
+        return Result.success(novelService.delete(id));
+    }
 }

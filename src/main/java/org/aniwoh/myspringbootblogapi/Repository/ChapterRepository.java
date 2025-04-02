@@ -20,4 +20,5 @@ public interface ChapterRepository extends MongoRepository<Chapter,String> {
 
     List<Chapter> findByNovelId(String novelId);
 
+    void deleteChaptersByNovelId(String id);
 }

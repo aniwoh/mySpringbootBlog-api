@@ -10,4 +10,6 @@ import java.util.List;
 public interface ReadingProcessRepository extends MongoRepository<ReadingProcess,String> {
 
     ReadingProcess findByNovelId(String novelId);
+
+    void deleteReadingProcessesByNovelId(String id);
 }

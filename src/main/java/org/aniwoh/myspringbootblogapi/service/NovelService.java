@@ -85,6 +85,13 @@ public class NovelService {
         return chapterRepository.findById(chapterId).orElse(null);
     }
 
+    public Boolean delete(String id) {
+        bookshelfRepository.deleteById(id);
+        chapterRepository.deleteChaptersByNovelId(id);
+        readingProcessRepository.deleteReadingProcessesByNovelId(id);
+        return true;
+    }
+
     private void doParse(BookShelf book) {
         try {
             // 更新状态为 PARSING
@@ -124,7 +131,7 @@ public class NovelService {
     }
 
     private String getAuthor(String content) {
-        Pattern pattern = Pattern.compile("作者：(.*?)\n");
+        Pattern pattern = Pattern.compile("作者[：:](.*?)\n");
         Matcher matcher = pattern.matcher(content);
         if (matcher.find()) {
             return matcher.group(1);
@@ -183,7 +190,7 @@ public class NovelService {
 
     private String getTocRule(String content) {
         try {
-            ClassPathResource resource = new ClassPathResource("defaultData/txtRole.json");
+            ClassPathResource resource = new ClassPathResource("defaultData/txtRule.json");
             String jsonContent = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
             List<TxtRule> txtRules = JSON.parseArray(jsonContent, TxtRule.class);
             Collections.reverse(txtRules);
